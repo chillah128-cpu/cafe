@@ -1,8 +1,8 @@
 // Telegram Bot API конфигурация
 const BOT_TOKEN = '8462290537:AAENLyTdB_juV82jqWbyMh_anyLXf5ksXtM';
-const CHAT_ID = '1195065009'; // Ваш chat_id
+const CHAT_ID = '1195065009';
 
-// Типы обращений для отображения
+// Типы обращений
 const requestTypes = {
     'feedback': '📝 Отзыв',
     'question': '❓ Вопрос',
@@ -11,33 +11,20 @@ const requestTypes = {
     'suggestion': '💡 Предложение'
 };
 
-// Проверка бота при загрузке страницы
+// Проверка при загрузке
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Проверяем доступность бота...');
-    checkBot();
+    console.log('=== НАЧАЛО РАБОТЫ ===');
+    console.log('Бот: @ninorinnie_bot');
+    console.log('CHAT_ID:', CHAT_ID);
+    console.log('Токен:', BOT_TOKEN.substring(0, 15) + '...');
 });
 
-// Функция проверки бота
-async function checkBot() {
-    try {
-        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`);
-        const data = await response.json();
-        
-        if (data.ok) {
-            console.log('✅ Бот доступен:', data.result.username);
-        } else {
-            console.error('❌ Бот недоступен:', data.description);
-            showMessage('Бот недоступен. Проверьте токен.', 'error');
-        }
-    } catch (error) {
-        console.error('❌ Ошибка проверки бота:', error);
-    }
-}
-
+// Обработчик формы
 document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+    console.log('=== ОТПРАВКА ФОРМЫ ===');
     
-    // Получаем данные формы
+    // Получаем данные
     const formData = {
         name: document.getElementById('name').value.trim(),
         phone: document.getElementById('phone').value.trim(),
@@ -48,13 +35,13 @@ document.getElementById('feedbackForm').addEventListener('submit', async functio
     
     console.log('Данные формы:', formData);
     
-    // Проверка заполнения обязательных полей
+    // Проверка
     if (!formData.name || !formData.phone || !formData.message) {
         showMessage('Пожалуйста, заполните все обязательные поля', 'error');
         return;
     }
     
-    // Показываем спиннер и меняем текст кнопки
+    // Блокируем кнопку
     const submitBtn = document.getElementById('submitBtn');
     const btnText = document.getElementById('btnText');
     const spinner = document.getElementById('spinner');
@@ -64,7 +51,7 @@ document.getElementById('feedbackForm').addEventListener('submit', async functio
     submitBtn.disabled = true;
     
     try {
-        // Формируем текст сообщения для Telegram
+        // Формируем сообщение
         const telegramMessage = `
 🔔 НОВОЕ ОБРАЩЕНИЕ С САЙТА
 
@@ -77,85 +64,131 @@ document.getElementById('feedbackForm').addEventListener('submit', async functio
 ${formData.message}
 
 ⏰ Время: ${new Date().toLocaleString('ru-RU')}
-`;
+        `;
         
         console.log('Сообщение для Telegram:', telegramMessage);
         
-        // Отправляем данные в Telegram бот
+        // Отправляем
         const response = await sendToTelegram(telegramMessage);
         
-        console.log('Ответ от Telegram API:', response);
+        console.log('Ответ API:', response);
         
         if (response.ok) {
-            showMessage('✅ Сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.', 'success');
-            // Очищаем форму
+            showMessage('✅ Сообщение отправлено в Telegram! Проверьте чат с @ninorinnie_bot', 'success');
             document.getElementById('feedbackForm').reset();
         } else {
-            console.error('Ошибка Telegram API:', response);
-            throw new Error(`Telegram API error: ${response.description}`);
+            console.error('Ошибка API:', response);
+            showMessage(`❌ Ошибка: ${response.description || 'Неизвестная ошибка'}`, 'error');
         }
+        
     } catch (error) {
-        console.error('Ошибка:', error);
-        showMessage('❌ Произошла ошибка при отправке. Пожалуйста, попробуйте позже или свяжитесь с нами по телефону.', 'error');
+        console.error('Ошибка отправки:', error);
+        showMessage(`❌ Ошибка: ${error.message}`, 'error');
     } finally {
-        // Восстанавливаем кнопку
-        btnText.textContent = 'Отправить сообщение в Telegram';
+        btnText.textContent = 'Отправить в Telegram';
         spinner.style.display = 'none';
         submitBtn.disabled = false;
     }
 });
 
-// Функция отправки сообщения в Telegram
+// Функция отправки (исправленная)
 async function sendToTelegram(message) {
-    console.log('Отправляем сообщение в Telegram...');
-    console.log('CHAT_ID:', CHAT_ID);
+    console.log('Вызываем sendToTelegram...');
     
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    // Используем GET запрос как в успешном тесте
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
+    
+    console.log('URL запроса:', url.substring(0, 100) + '...');
     
     try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: message,
-                parse_mode: 'HTML'
-            })
-        });
-        
+        const response = await fetch(url);
         const data = await response.json();
-        console.log('Ответ от Telegram:', data);
-        
         return data;
     } catch (error) {
-        console.error('Ошибка при отправке в Telegram:', error);
+        console.error('Ошибка fetch:', error);
         throw error;
     }
 }
 
-// Функция для показа сообщений
+// Альтернативный метод отправки (более надежный)
+async function sendToTelegramPOST(message) {
+    console.log('Отправка POST запросом...');
+    
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    
+    const formData = new FormData();
+    formData.append('chat_id', CHAT_ID);
+    formData.append('text', message);
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Ошибка POST запроса:', error);
+        throw error;
+    }
+}
+
+// Функция показа сообщений
 function showMessage(text, type) {
+    console.log('Показываем сообщение:', text);
+    
     const container = document.getElementById('messageContainer');
+    if (!container) {
+        console.error('Элемент messageContainer не найден!');
+        alert(text); // Показываем через alert если нет контейнера
+        return;
+    }
+    
     container.textContent = text;
     container.className = type;
     container.style.display = 'block';
     
-    // Автоматически скрываем успешное сообщение через 5 секунд
     if (type === 'success') {
-        setTimeout(() => {
-            container.style.display = 'none';
-        }, 5000);
+        setTimeout(() => container.style.display = 'none', 5000);
     }
 }
 
-// Валидация телефона
+// Валидация
 document.getElementById('phone').addEventListener('input', function(e) {
     this.value = this.value.replace(/[^0-9+()-]/g, '');
 });
 
-// Валидация имени (только буквы и пробелы)
 document.getElementById('name').addEventListener('input', function(e) {
     this.value = this.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '');
 });
+
+// Тестовая функция для проверки
+window.testBotConnection = async function() {
+    console.log('=== ТЕСТ БОТА ===');
+    
+    try {
+        // Проверка бота
+        const botInfo = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`);
+        const botData = await botInfo.json();
+        console.log('Информация о боте:', botData);
+        
+        // Тестовая отправка
+        const testMessage = `🛠️ Тестовое сообщение из сайта\nВремя: ${new Date().toLocaleTimeString()}`;
+        const testUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(testMessage)}`;
+        
+        console.log('Тестовый URL:', testUrl);
+        
+        const response = await fetch(testUrl);
+        const result = await response.json();
+        console.log('Результат теста:', result);
+        
+        if (result.ok) {
+            alert('✅ Тест успешен! Сообщение отправлено в Telegram');
+        } else {
+            alert(`❌ Ошибка: ${result.description}`);
+        }
+        
+    } catch (error) {
+        console.error('Ошибка теста:', error);
+        alert(`❌ Ошибка теста: ${error.message}`);
+    }
+};

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кофейня "Уютный уголок"</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-coffee"></i> Кофейня "Уютный уголок"</h1>
+            <p class="subtitle">Лучший кофе в городе с 2015 года</p>
+        </header>
+
+        <main>
+            <section class="hero">
+                <img src="https://img.freepik.com/free-photo/interior-shot-cafe-with-chairs-near-bar-with-wooden-tables_181624-1669.jpg?semt=ais_hybrid&w=740&q=80" alt="Кофейня">
+                <div class="hero-text">
+                    <h2>Добро пожаловать в наш уютный уголок!</h2>
+                    <p>Мы предлагаем более 30 сортов свежеобжаренного кофе, авторские десерты и теплую атмосферу для работы и отдыха.</p>
+                </div>
+            </section>
+
+            <section class="info">
+                <div class="info-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Часы работы</h3>
+                    <p>Пн-Пт: 8:00 - 22:00</p>
+                    <p>Сб-Вс: 9:00 - 23:00</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Адрес</h3>
+                    <p>ул. Кофейная, 15</p>
+                    <p>г. Ваш Город</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-phone"></i>
+                    <h3>Телефон</h3>
+                    <p>+7 (123) 456-78-90</p>
+                    <p>Заказ столиков</p>
+                </div>
+            </section>
+
+            <section class="feedback">
+                <h2><i class="fas fa-comment-dots"></i> Форма обратной связи</h2>
+                <p>Оставьте отзыв, задайте вопрос или забронируйте столик. Мы ответим в течение 2 часов!</p>
+                
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label for="name"><i class="fas fa-user"></i> Ваше имя *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone"><i class="fas fa-phone"></i> Телефон *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message"><i class="fas fa-edit"></i> Сообщение *</label>
+                        <textarea id="message" name="message" rows="4" required placeholder="Ваш отзыв, вопрос или заявка на бронирование..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="type"><i class="fas fa-tag"></i> Тип обращения</label>
+                        <select id="type" name="type">
+                            <option value="feedback">Отзыв</option>
+                            <option value="question">Вопрос</option>
+                            <option value="reservation">Бронирование столика</option>
+                            <option value="complaint">Жалоба</option>
+                            <option value="suggestion">Предложение</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" id="submitBtn">
+                        <span id="btnText">Отправить сообщение в Telegram</span>
+                        <div id="spinner" class="spinner"></div>
+                    </button>
+                    
+                    <div id="messageContainer"></div>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2023 Кофейня "Уютный уголок". Все права защищены.</p>
+            <div class="social">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-vk"></i></a>
+                <a href="#"><i class="fab fa-telegram"></i></a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="syte.js"></script>
+</body>
+</html>
